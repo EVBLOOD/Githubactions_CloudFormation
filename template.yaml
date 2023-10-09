@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: "this is the workshop number 4"
+Description: "this is the workshop number 4 "
 
 Resources:
   S3WorkshopBucket:
