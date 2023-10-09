@@ -7,13 +7,13 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
     Properties:
-      BucketName: "evbloods3workshopbuckets"
+      BucketName: "s3workshopbuckets"
 
   IAMRoleWorkshop:
     Type: AWS::IAM::Role
     DeletionPolicy: Delete
     Properties:
-      RoleName: "evbloodS3WorkshopIAMRoleWorkshop"
+      RoleName: S3WorkshopIAMRoleWorkshop
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -24,7 +24,7 @@ Resources:
             Action:
               - "sts:AssumeRole"
       Policies:
-        - PolicyName: "evbloodWorkshopS3ReadWriteAccess"
+        - PolicyName: "WorkshopS3ReadWriteAccess"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -43,7 +43,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       Description: "the function for Workshop"
-      FunctionName: "evbloodWritehandler"
+      FunctionName: "Writehandler"
       Handler: "index.lambda_handler"
       Role: !GetAtt IAMRoleWorkshop.Arn
       Runtime: "python3.9"
