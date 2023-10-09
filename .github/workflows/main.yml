@@ -27,6 +27,6 @@ jobs:
     - name: Deploy Amazon Cluster
       uses: aws-actions/aws-cloudformation-github-deploy@master
       with:
-        name: deploy-cluster
+        name: saadDeploy
         template: template.yaml
         capabilities: CAPABILITY_NAMED_IAM
