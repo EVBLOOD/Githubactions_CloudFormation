@@ -7,7 +7,11 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
     Properties:
-      BucketName: "S3WorkshopBucket"
+      BucketName: "s3workshopbucket1"
+      # NotificationConfiguration:
+      #   LambdaConfigurations:
+      #   - Event: 's3:ObjectCreated:*'
+      #     Function: !GetAtt LambdaFunctionWorkshop.Arn
 
   IAMRoleWorkshop:
     Type: AWS::IAM::Role
@@ -21,8 +25,8 @@ Resources:
             Principal:
               Service:
                 - "lambda.amazonaws.com"
-              Action:
-                - "sts:AssumeRole"
+            Action:
+              - "sts:AssumeRole"
       Policies:
         - PolicyName: "WorkshopS3ReadWriteAccess"
           PolicyDocument:
@@ -43,9 +47,9 @@ Resources:
     Properties:
       Description: "the function for Workshop"
       FunctionName: "Ms_handler"
-      # Handler: "lambda_handler"
+      Handler: "index.lambda_handler"
       Role: !GetAtt IAMRoleWorkshop.Arn
-      Runtime: "python3.6"
+      Runtime: "python3.9"
       Timeout: 60
       Environment:
         Variables:
@@ -76,3 +80,8 @@ Resources:
       Tags:
         - Key: team
           Value: dev
+  LambdaBucketTriger:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      EventSourceArn: !GetAtt S3WorkshopBucket.Arn
+      FunctionName: !Ref LambdaFunctionWorkshop
