@@ -1,0 +1,51 @@
+name: Deploy Cluster
+
+on:
+  push:
+    branches: "main"
+    paths-ignore: 
+      - "README.md"
+      - ".gitignore"
+
+jobs:
+  cluster:
+    name: Deploy stack to AWS
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      # id: creds
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.REGION}}
+
+    # - name: Configure environment name
+    #   id: env-name
+    #   env:
+    #     REPO: ${{ github.repository }}
+    #   run: |
+    #     ENVIRONMENT=`echo $REPO | tr "/" "-"`
+    #     echo "Environment name: $ENVIRONMENT"
+    #     echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
+
+    # - name: Deploy Amazon EKS Cluster
+    #   id: eks-cluster
+    #   uses: aws-actions/aws-cloudformation-github-deploy@master
+    #   with:
+    #     name: ${{ steps.env-name.outputs.environment }}-cluster
+    #     template: https://s3.amazonaws.com/aws-quickstart/quickstart-amazon-eks/templates/amazon-eks-master.template.yaml
+    #     no-fail-on-empty-changeset: "1"
+    #     parameter-overrides: >-
+    #       AvailabilityZones=${{ github.event.inputs.region }}a,
+    #       AvailabilityZones=${{ github.event.inputs.region }}c,
+    #       KeyPairName=${{ github.event.inputs.keypair }},
+    #       NumberOfAZs=2,
+    #       ProvisionBastionHost=Disabled,
+    #       EKSPublicAccessEndpoint=Enabled,
+    #       EKSPrivateAccessEndpoint=Enabled,
+    #       RemoteAccessCIDR=0.0.0.0/0
