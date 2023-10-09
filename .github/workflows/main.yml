@@ -24,9 +24,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.REGION}}
 
-    - name: Deploy Amazon Cluster
+    - name: Deploy
       uses: aws-actions/aws-cloudformation-github-deploy@master
       with:
-        name: saadDeploy
+        name: deployit
         template: template.yaml
         capabilities: CAPABILITY_NAMED_IAM
