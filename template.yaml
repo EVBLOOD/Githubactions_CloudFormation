@@ -7,11 +7,7 @@ Resources:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
     Properties:
-      BucketName: "s3workshopbucket1"
-      # NotificationConfiguration:
-      #   LambdaConfigurations:
-      #   - Event: 's3:ObjectCreated:*'
-      #     Function: !GetAtt LambdaFunctionWorkshop.Arn
+      BucketName: "s3workshopbuckets"
 
   IAMRoleWorkshop:
     Type: AWS::IAM::Role
@@ -41,12 +37,51 @@ Resources:
                 Resource:
                   - !Sub "arn:aws:s3:::${S3WorkshopBucket}"
                   - !Sub "arn:aws:s3:::${S3WorkshopBucket}/*"
-  LambdaFunctionWorkshop:
+
+  WriteLambdaFunctionWorkshop:
     Type: AWS::Lambda::Function
     DeletionPolicy: Delete
     Properties:
       Description: "the function for Workshop"
-      FunctionName: "Ms_handler"
+      FunctionName: "Writehandler"
+      Handler: "index.lambda_handler"
+      Role: !GetAtt IAMRoleWorkshop.Arn
+      Runtime: "python3.9"
+      Timeout: 60
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3WorkshopBucket
+      Code:
+        ZipFile: |
+          import os
+          import csv
+          import boto3
+
+          def lambda_handler(event, context):
+            bucket_name = os.environ['BUCKET_NAME']
+            # Step 2: Write Python code to create a CSV file
+            header = ['Name', 'Age', 'Profession']
+            data = [('John', '25', 'Engineer'),
+                    ('Anna', '28', 'Doctor'),
+                    ('Peter', '30', 'Artist')]
+            filename = 'people.csv'
+            with open('/tmp/' + filename, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(header)
+                writer.writerows(data)
+            # Step 3: Write Python code to upload the CSV file to S3
+            s3 = boto3.client('s3')
+            s3.upload_file('/tmp/' + filename, bucket_name, filename)
+      Tags:
+        - Key: team
+          Value: dev
+
+  ReadLambdaFunctionWorkshop:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Delete
+    Properties:
+      Description: "the function for Workshop"
+      FunctionName: "Readhandler"
       Handler: "index.lambda_handler"
       Role: !GetAtt IAMRoleWorkshop.Arn
       Runtime: "python3.9"
@@ -61,7 +96,7 @@ Resources:
           def lambda_handler(event, context):
             bucket_name = os.environ['BUCKET_NAME']
             s3 = boto3.client('s3')
-            object_key = 'evblood.txt'
+            object_key = 'people.csv'
             try:
               response = s3.get_object(Bucket=bucket_name, Key=object_key)
               data = response['Body'].read()
@@ -80,8 +115,3 @@ Resources:
       Tags:
         - Key: team
           Value: dev
-  LambdaBucketTriger:
-    Type: AWS::Lambda::EventSourceMapping
-    Properties:
-      EventSourceArn: !GetAtt S3WorkshopBucket.Arn
-      FunctionName: !Ref LambdaFunctionWorkshop
