@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "this is the workshop number 4"
+
+Resources:
+  S3WorkshopBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: "S3WorkshopBucket"
+
+  IAMRoleWorkshop:
+    Type: AWS::IAM::Role
+    DeletionPolicy: Delete
+    Properties:
+      RoleName: S3WorkshopIAMRoleWorkshop
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+              Action:
+                - "sts:AssumeRole"
+      Policies:
+        - PolicyName: "WorkshopS3ReadWriteAccess"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:ListBucket"
+                  - "s3:DeleteObject"
+                Resource:
+                  - !Sub "arn:aws:s3:::${S3WorkshopBucket}"
+                  - !Sub "arn:aws:s3:::${S3WorkshopBucket}/*"
+  LambdaFunctionWorkshop:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Delete
+    Properties:
+      Description: "the function for Workshop"
+      FunctionName: "Ms_handler"
+      # Handler: "lambda_handler"
+      Role: !GetAtt IAMRoleWorkshop.Arn
+      Runtime: "python3.6"
+      Timeout: 60
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3WorkshopBucket
+      Code:
+        ZipFile: |
+          import os
+          import boto3
+          def lambda_handler(event, context):
+            bucket_name = os.environ['BUCKET_NAME']
+            s3 = boto3.client('s3')
+            object_key = 'evblood.txt'
+            try:
+              response = s3.get_object(Bucket=bucket_name, Key=object_key)
+              data = response['Body'].read()
+              # Do something with the data
+              print(data)
+              return {
+              'statusCode': 200,
+              'body': 'Hello from Lambda.'
+              }
+            except Exception as e:
+              print(f"Error: {e}")
+              return {
+              'statusCode': 500,
+              'body': 'Error.'
+              }
+      Tags:
+        - Key: team
+          Value: dev
