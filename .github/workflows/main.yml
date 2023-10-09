@@ -29,3 +29,4 @@ jobs:
       with:
         name: deploy-cluster
         template: template.yaml
+        capabilities: CAPABILITY_NAMED_IAM
