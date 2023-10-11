@@ -91,28 +91,39 @@ Resources:
           BUCKET_NAME: !Ref S3WorkshopBucket
       Code:
         ZipFile: |
-          import os
+          # import os
+          # import boto3
+          # def lambda_handler(event, context):
+          #   print(context, event);
+          #   bucket_name = os.environ['BUCKET_NAME']
+          #   s3 = boto3.client('s3')
+          #   object_key = 'people.csv'
+          #   try:
+          #     response = s3.get_object(Bucket=bucket_name, Key=object_key)
+          #     data = response['Body'].read()
+          #     # Do something with the data
+          #     print(data)
+          #     return {
+          #     'statusCode': 200,
+          #     'body': 'Hello from Lambda.'
+          #     }
+          #   except Exception as e:
+          #     print(f"Error: {e}")
+          #     return {
+          #     'statusCode': 500,
+          #     'body': 'Error.'
+          #     }
           import boto3
           def lambda_handler(event, context):
-            print(context, event);
-            bucket_name = os.environ['BUCKET_NAME']
             s3 = boto3.client('s3')
-            object_key = 'people.csv'
-            try:
-              response = s3.get_object(Bucket=bucket_name, Key=object_key)
-              data = response['Body'].read()
-              # Do something with the data
-              print(data)
-              return {
-              'statusCode': 200,
-              'body': 'Hello from Lambda.'
-              }
-            except Exception as e:
-              print(f"Error: {e}")
-              return {
-              'statusCode': 500,
-              'body': 'Error.'
-              }
+            bucket_name = event['queryStringParameters']['bucket']
+            object_key = event['queryStringParameters']['key']
+            response = s3.get_object(Bucket=bucket_name, Key=object_key)
+            data = response['Body'].read()
+            return {
+                'statusCode': 200,
+                'body': data
+            }
       Tags:
         - Key: team
           Value: dev
@@ -141,6 +152,6 @@ Resources:
         IntegrationHttpMethod: "POST"
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReadLambdaFunctionWorkshop.Arn}/invocations"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
-        # RequestParameters:
-        #   integration.request.querystring.bucket: "'my-s3-bucket'"
-        #   integration.request.querystring.key: "'my-object-key'"
+      # RequestParameters:
+      #   integration.request.querystring.bucket: "'bucket'"
+      #   integration.request.querystring.key: "'keyObject'"
