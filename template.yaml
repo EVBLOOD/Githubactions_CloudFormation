@@ -119,3 +119,16 @@ Resources:
       FunctionName: !Ref LambdaFunctionWorkshop
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${TheRestAPIWorkshop}/*/GET/api"
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref MyRestApi
+      StageName: Prod
+
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref MyRestApi
+      DeploymentId: !Ref ApiGatewayDeployment
+      StageName: Prod
