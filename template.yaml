@@ -136,11 +136,11 @@ Resources:
       ResourceId: !Ref APIResourceWorkshop
       HttpMethod: "GET"
       AuthorizationType: "NONE"
-      # Integration:
-      #   Type: "AWS_PROXY"
-      #   IntegrationHttpMethod: "POST"
-      #   Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations"
-      #   PassthroughBehavior: "WHEN_NO_TEMPLATES"
-      #   RequestParameters:
-      #     integration.request.querystring.bucket: "'my-s3-bucket'"
-      #     integration.request.querystring.key: "'my-object-key'"
+      Integration:
+        Type: "AWS_PROXY"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReadLambdaFunctionWorkshop.Arn}/invocations"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
+        # RequestParameters:
+        #   integration.request.querystring.bucket: "'my-s3-bucket'"
+        #   integration.request.querystring.key: "'my-object-key'"
