@@ -55,14 +55,14 @@ Resources:
             s3 = boto3.client('s3')
             bucket_name = event['queryStringParameters']['bucket']
             object_key = event['queryStringParameters']['key']
-            if bucket_name :
+            if bucket_name:
               response = s3.get_object(Bucket=bucket_name, Key=object_key)
               data = response['Body'].read()
               return {
                   'statusCode': 200,
                   'body': data
               }
-            elif :
+            else:
               print(s3)
               return {
                   'statusCode': 200,
