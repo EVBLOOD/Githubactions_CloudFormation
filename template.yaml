@@ -131,5 +131,5 @@ Resources:
     Type: AWS::ApiGateway::Stage
     Properties:
       RestApiId: !Ref TheRestAPIWorkshop
-      DeploymentId: !Ref ApiGatewayeployment
+      DeploymentId: !Ref ApiGatewayDeployment
       StageName: Prodi
