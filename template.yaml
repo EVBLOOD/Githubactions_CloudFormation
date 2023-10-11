@@ -94,6 +94,7 @@ Resources:
           import os
           import boto3
           def lambda_handler(event, context):
+            print(context, event);
             bucket_name = os.environ['BUCKET_NAME']
             s3 = boto3.client('s3')
             object_key = 'people.csv'
@@ -115,3 +116,31 @@ Resources:
       Tags:
         - Key: team
           Value: dev
+
+  TheRestAPIWorkshop:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: "The REST API"
+
+  APIResourceWorkshop:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref TheRestAPIWorkshop
+      ParentId: !GetAtt TheRestAPIWorkshop.RootResourceId
+      PathPart: ""
+
+  APIMethodWorkshop:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref TheRestAPIWorkshop
+      ResourceId: !Ref APIResourceWorkshop
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      # Integration:
+      #   Type: "AWS_PROXY"
+      #   IntegrationHttpMethod: "POST"
+      #   Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations"
+      #   PassthroughBehavior: "WHEN_NO_TEMPLATES"
+      #   RequestParameters:
+      #     integration.request.querystring.bucket: "'my-s3-bucket'"
+      #     integration.request.querystring.key: "'my-object-key'"
