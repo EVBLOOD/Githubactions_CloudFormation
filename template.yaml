@@ -127,7 +127,7 @@ Resources:
       RestApiId: !Ref TheRestAPIWorkshop
       StageName: Prod
     DependsOn:
-      - APIResourceWorkshop
+      - APIMethodWorkshop
 
   ApiGatewayStage:
     Type: AWS::ApiGateway::Stage
@@ -136,4 +136,4 @@ Resources:
       DeploymentId: !Ref ApiGatewayDeployment
       StageName: Prod
     DependsOn:
-      - APIResourceWorkshop
+      - APIMethodWorkshop
