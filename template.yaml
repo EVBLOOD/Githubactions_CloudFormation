@@ -1,6 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-
-Description: "this is the workshop number 4 "
+Description: "This is the workshop number 4"
 
 Resources:
   S3WorkshopBucket:
@@ -42,7 +41,7 @@ Resources:
     Type: AWS::Lambda::Function
     DeletionPolicy: Delete
     Properties:
-      Description: "the function for Workshop"
+      Description: "The function for Workshop"
       FunctionName: "Readhandler"
       Handler: "index.lambda_handler"
       Role: !GetAtt IAMRoleWorkshop.Arn
@@ -60,7 +59,7 @@ Resources:
               data = response['Body'].read()
               return {
                   'statusCode': 200,
-                  'body': data
+                  'body': data.decode('utf-8')
               }
             else:
               print(s3)
@@ -108,8 +107,8 @@ Resources:
       RequestParameters:
         method.request.querystring.bucket: true
         method.request.querystring.key: true
-        integration.request.querystring.bucket: true
-        integration.request.querystring.key: true
+        integration.request.querystring.bucket: "method.request.querystring.bucket"
+        integration.request.querystring.key: "method.request.querystring.key"
 
   LambdaPermissionWorkshop:
     Type: AWS::Lambda::Permission
