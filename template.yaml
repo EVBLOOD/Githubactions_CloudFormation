@@ -152,6 +152,6 @@ Resources:
         IntegrationHttpMethod: "POST"
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReadLambdaFunctionWorkshop.Arn}/invocations"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
-      # RequestParameters:
+      #  RequestParameters:
       #   integration.request.querystring.bucket: "'bucket'"
       #   integration.request.querystring.key: "'keyObject'"
