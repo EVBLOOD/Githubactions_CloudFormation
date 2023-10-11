@@ -91,19 +91,19 @@ Resources:
       ParentId: !GetAtt TheRestAPIWorkshop.RootResourceId
       PathPart: "api"
 
-  # APIMethodWorkshop:
-  #   Type: AWS::ApiGateway::Method
-  #   DeletionPolicy: Delete
-  #   Properties:
-  #     RestApiId: !Ref TheRestAPIWorkshop
-  #     ResourceId: !Ref APIResourceWorkshop
-  #     HttpMethod: "GET"
-  #     AuthorizationType: "NONE"
-  #     Integration:
-  #       Type: "AWS_PROXY"
-  #       IntegrationHttpMethod: "POST"
-  #       Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionWorkshop.Arn}/invocations"
-  #       PassthroughBehavior: "WHEN_NO_TEMPLATES"
+  APIMethodWorkshop:
+    Type: AWS::ApiGateway::Method
+    DeletionPolicy: Delete
+    Properties:
+      RestApiId: !Ref TheRestAPIWorkshop
+      ResourceId: !Ref APIResourceWorkshop
+      HttpMethod: "GET"
+      AuthorizationType: "NONE"
+      Integration:
+        Type: "AWS_PROXY"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionWorkshop.Arn}/invocations"
+        PassthroughBehavior: "WHEN_NO_TEMPLATES"
   #     RequestParameters:
   #       method.request.querystring.bucket: false
   #       method.request.querystring.key: false
