@@ -109,6 +109,8 @@ Resources:
         method.request.querystring.key: true
         integration.request.querystring.bucket: "method.request.querystring.bucket"
         integration.request.querystring.key: "method.request.querystring.key"
+    DependsOn:
+      - APIResourceWorkshop
 
   LambdaPermissionWorkshop:
     Type: AWS::Lambda::Permission
