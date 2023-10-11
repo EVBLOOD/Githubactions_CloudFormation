@@ -8,6 +8,9 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       BucketName: "s3workshopbuckets"
+      LambdaConfiguration:
+        Event: "s3:ObjectCreated:*"
+        Function: !GetAtt LambdaFunctionWorkshop.Arn
 
   IAMRoleWorkshop:
     Type: AWS::IAM::Role
@@ -38,45 +41,7 @@ Resources:
                   - !Sub "arn:aws:s3:::${S3WorkshopBucket}"
                   - !Sub "arn:aws:s3:::${S3WorkshopBucket}/*"
 
-  WriteLambdaFunctionWorkshop:
-    Type: AWS::Lambda::Function
-    DeletionPolicy: Delete
-    Properties:
-      Description: "the function for Workshop"
-      FunctionName: "Writehandler"
-      Handler: "index.lambda_handler"
-      Role: !GetAtt IAMRoleWorkshop.Arn
-      Runtime: "python3.9"
-      Timeout: 60
-      Environment:
-        Variables:
-          BUCKET_NAME: !Ref S3WorkshopBucket
-      Code:
-        ZipFile: |
-          import os
-          import csv
-          import boto3
-
-          def lambda_handler(event, context):
-            bucket_name = os.environ['BUCKET_NAME']
-            # Step 2: Write Python code to create a CSV file
-            header = ['Name', 'Age', 'Profession']
-            data = [('John', '25', 'Engineer'),
-                    ('Anna', '28', 'Doctor'),
-                    ('Peter', '30', 'Artist')]
-            filename = 'people.csv'
-            with open('/tmp/' + filename, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(header)
-                writer.writerows(data)
-            # Step 3: Write Python code to upload the CSV file to S3
-            s3 = boto3.client('s3')
-            s3.upload_file('/tmp/' + filename, bucket_name, filename)
-      Tags:
-        - Key: team
-          Value: dev
-
-  ReadLambdaFunctionWorkshop:
+  LambdaFunctionWorkshop:
     Type: AWS::Lambda::Function
     DeletionPolicy: Delete
     Properties:
@@ -86,55 +51,40 @@ Resources:
       Role: !GetAtt IAMRoleWorkshop.Arn
       Runtime: "python3.9"
       Timeout: 60
-      Environment:
-        Variables:
-          BUCKET_NAME: !Ref S3WorkshopBucket
       Code:
         ZipFile: |
-          # import os
-          # import boto3
-          # def lambda_handler(event, context):
-          #   print(context, event);
-          #   bucket_name = os.environ['BUCKET_NAME']
-          #   s3 = boto3.client('s3')
-          #   object_key = 'people.csv'
-          #   try:
-          #     response = s3.get_object(Bucket=bucket_name, Key=object_key)
-          #     data = response['Body'].read()
-          #     # Do something with the data
-          #     print(data)
-          #     return {
-          #     'statusCode': 200,
-          #     'body': 'Hello from Lambda.'
-          #     }
-          #   except Exception as e:
-          #     print(f"Error: {e}")
-          #     return {
-          #     'statusCode': 500,
-          #     'body': 'Error.'
-          #     }
           import boto3
           def lambda_handler(event, context):
             s3 = boto3.client('s3')
             bucket_name = event['queryStringParameters']['bucket']
             object_key = event['queryStringParameters']['key']
-            response = s3.get_object(Bucket=bucket_name, Key=object_key)
-            data = response['Body'].read()
-            return {
-                'statusCode': 200,
-                'body': data
-            }
+            if bucket_name :
+              response = s3.get_object(Bucket=bucket_name, Key=object_key)
+              data = response['Body'].read()
+              return {
+                  'statusCode': 200,
+                  'body': data
+              }
+            elif :
+              print(s3)
+              return {
+                  'statusCode': 200,
+                  'body': "data"
+              }
+
       Tags:
         - Key: team
           Value: dev
 
   TheRestAPIWorkshop:
     Type: AWS::ApiGateway::RestApi
+    DeletionPolicy: Delete
     Properties:
       Name: "The REST API"
 
   APIResourceWorkshop:
     Type: AWS::ApiGateway::Resource
+    DeletionPolicy: Delete
     Properties:
       RestApiId: !Ref TheRestAPIWorkshop
       ParentId: !GetAtt TheRestAPIWorkshop.RootResourceId
@@ -142,6 +92,7 @@ Resources:
 
   APIMethodWorkshop:
     Type: AWS::ApiGateway::Method
+    DeletionPolicy: Delete
     Properties:
       RestApiId: !Ref TheRestAPIWorkshop
       ResourceId: !Ref APIResourceWorkshop
@@ -152,6 +103,6 @@ Resources:
         IntegrationHttpMethod: "POST"
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReadLambdaFunctionWorkshop.Arn}/invocations"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
-      #  RequestParameters:
-      #   integration.request.querystring.bucket: "'bucket'"
-      #   integration.request.querystring.key: "'keyObject'"
+      RequestParameters:
+        integration.request.querystring.bucket: "method.request.querystring.bucket"
+        integration.request.querystring.key: "method.request.querystring.key"
