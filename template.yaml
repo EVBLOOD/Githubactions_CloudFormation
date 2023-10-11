@@ -127,9 +127,9 @@ Resources:
     DependsOn:
       - APIMethodWorkshop
 
-  # ApiGatewayStage:
-  #   Type: AWS::ApiGateway::Stage
-  #   Properties:
-  #     RestApiId: !Ref TheRestAPIWorkshop
-  #     DeploymentId: !Ref ApiGatewayDeployment
-  #     StageName: Prodi
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref TheRestAPIWorkshop
+      DeploymentId: !Ref ApiGatewayDeployment
+      StageName: dev
