@@ -8,9 +8,6 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       BucketName: "s3workshopbuckets"
-      LambdaConfiguration:
-        Event: "s3:ObjectCreated:*"
-        Function: !GetAtt LambdaFunctionWorkshop.Arn
 
   IAMRoleWorkshop:
     Type: AWS::IAM::Role
@@ -75,6 +72,11 @@ Resources:
       Tags:
         - Key: team
           Value: dev
+      TracingConfig:
+        Mode: Active
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref S3WorkshopBucket
 
   TheRestAPIWorkshop:
     Type: AWS::ApiGateway::RestApi
@@ -106,3 +108,12 @@ Resources:
       RequestParameters:
         integration.request.querystring.bucket: "method.request.querystring.bucket"
         integration.request.querystring.key: "method.request.querystring.key"
+
+  LambdaPermissionWorkshop:
+    Type: AWS::Lambda::Permission
+    DeletionPolicy: Delete
+    Properties:
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref LambdaFunctionWorkshop
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${TheRestAPIWorkshop}/*/GET/api"
