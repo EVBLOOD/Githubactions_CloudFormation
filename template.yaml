@@ -42,7 +42,7 @@ Resources:
     DeletionPolicy: Delete
     Properties:
       Description: "The function for Workshop"
-      FunctionName: "Readhandler"
+      FunctionName: "ReadhandlerEvblood"
       Handler: "index.lambda_handler"
       Role: !GetAtt IAMRoleWorkshop.Arn
       Runtime: "python3.9"
