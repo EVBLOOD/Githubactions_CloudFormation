@@ -123,12 +123,12 @@ Resources:
   ApiGatewayDeployment:
     Type: AWS::ApiGateway::Deployment
     Properties:
-      RestApiId: !Ref MyRestApi
+      RestApiId: !Ref TheRestAPIWorkshop
       StageName: Prod
 
   ApiGatewayStage:
     Type: AWS::ApiGateway::Stage
     Properties:
-      RestApiId: !Ref MyRestApi
+      RestApiId: !Ref TheRestAPIWorkshop
       DeploymentId: !Ref ApiGatewayDeployment
       StageName: Prod
