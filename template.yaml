@@ -104,9 +104,9 @@ Resources:
         IntegrationHttpMethod: "POST"
         Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunctionWorkshop.Arn}/invocations"
         PassthroughBehavior: "WHEN_NO_TEMPLATES"
-  #     RequestParameters:
-  #       method.request.querystring.bucket: false
-  #       method.request.querystring.key: false
+      RequestParameters:
+        method.request.querystring.bucket: false
+        method.request.querystring.key: false
 
   LambdaPermissionWorkshop:
     Type: AWS::Lambda::Permission
