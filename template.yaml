@@ -12,7 +12,7 @@ Resources:
     Type: AWS::IAM::Role
     DeletionPolicy: Delete
     Properties:
-      RoleName: S3WorkshopIAMRoleWorkshop
+      RoleName: S3WorkshopIAMRoleWorkshopEvblood
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
