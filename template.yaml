@@ -50,24 +50,43 @@ Resources:
       Code:
         ZipFile: |
           import boto3
+          import json
           def lambda_handler(event, context):
             s3 = boto3.client('s3')
-            bucket_name = event['queryStringParameters']['bucket']
-            object_key = event['queryStringParameters']['key']
-            if bucket_name:
-              response = s3.get_object(Bucket=bucket_name, Key=object_key)
-              data = response['Body'].read()
+            if 'queryStringParameters' in event and 'bucket' in event['queryStringParameters'] :
+              bucket_name = event['queryStringParameters']['bucket']
+              if 'key' in event['queryStringParameters'] :
+                object_key = event['queryStringParameters']['key']
+                try:
+                  response = s3.get_object(Bucket=bucket_name, Key=object_key)
+                  data = response['Body'].read().decode('utf-8')
+                  return {
+                    'statusCode': 200,
+                    'body': json.dumps(data)
+                  }
+                except Exception as e:
+                  return {
+                      'statusCode': 404,
+                      'body': json.dumps(str(e))
+                  }
+              else :
+                try:
+                  response = s3.list_buckets()
+                  data = response['Buckets']
+                  return {
+                    'statusCode': 200,
+                    'body': json.dumps(data)
+                  }
+                except Exception as e:
+                  return {
+                      'statusCode': 404,
+                      'body': json.dumps(str(e))
+                  }
+            else :
               return {
-                  'statusCode': 200,
-                  'body': data.decode('utf-8')
+                'statusCode': 404,
+                body': json.dumps("error")
               }
-            else:
-              print(s3)
-              return {
-                  'statusCode': 200,
-                  'body': "data"
-              }
-
       Tags:
         - Key: team
           Value: dev
