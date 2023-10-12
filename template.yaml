@@ -59,10 +59,10 @@ Resources:
                 object_key = event['queryStringParameters']['key']
                 try:
                   response = s3.get_object(Bucket=bucket_name, Key=object_key)
-                  data = response['Body'].read().decode('utf-8')
+                  # data = response['Body'].read()
                   return {
                     'statusCode': 200,
-                    'body': json.dumps(data)
+                    'body': json.dumps(str(response))
                   }
                 except Exception as e:
                   return {
@@ -70,23 +70,23 @@ Resources:
                       'body': json.dumps(str(e))
                   }
               else :
-                try:
-                  response = s3.list_buckets()
-                  data = response['Buckets']
-                  return {
-                    'statusCode': 200,
-                    'body': json.dumps(data)
-                  }
-                except Exception as e:
-                  return {
-                      'statusCode': 404,
-                      'body': json.dumps(str(e))
-                  }
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps(str(e))
+                }
             else :
-              return {
-                'statusCode': 404,
-                body': json.dumps("error")
-              }
+              try:
+                response = s3.list_buckets()
+                data = response['Buckets']
+                return {
+                  'statusCode': 200,
+                  'body': json.dumps(str(data))
+                }
+              except Exception as e:
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps(str(e))
+                }
       Tags:
         - Key: team
           Value: dev
