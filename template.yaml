@@ -34,8 +34,7 @@ Resources:
                   - "s3:ListBucket"
                   - "s3:DeleteObject"
                 Resource:
-                  - !Sub "arn:aws:s3:::${S3WorkshopBucket}"
-                  - !Sub "arn:aws:s3:::${S3WorkshopBucket}/*"
+                  - "*"
 
   LambdaFunctionWorkshop:
     Type: AWS::Lambda::Function
