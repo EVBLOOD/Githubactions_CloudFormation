@@ -33,6 +33,7 @@ Resources:
                   - "s3:PutObject"
                   - "s3:ListBucket"
                   - "s3:DeleteObject"
+                  - "s3:ListAllMyBuckets"
                 Resource:
                   - "*"
 
@@ -52,7 +53,7 @@ Resources:
           import json
           def lambda_handler(event, context):
             s3 = boto3.client('s3')
-            if 'queryStringParameters' in event and 'bucket' in event['queryStringParameters'] :
+            if 'queryStringParameters' in event and event['queryStringParameters'] is not None and 'bucket' in event['queryStringParameters'] :
               bucket_name = event['queryStringParameters']['bucket']
               if 'key' in event['queryStringParameters'] :
                 object_key = event['queryStringParameters']['key']
@@ -61,16 +62,27 @@ Resources:
                   # data = response['Body'].read()
                   return {
                     'statusCode': 200,
+                    'headers': {
+                      'Access-Control-Allow-Headers': 'Content-Type',
+                      'Access-Control-Allow-Origin': 'http://localhost:5173',
+                      'Access-Control-Allow-Methods': 'GET'
+                    },
                     'body': json.dumps(str(response))
                   }
                 except Exception as e:
                   return {
                       'statusCode': 404,
+                      
                       'body': json.dumps(str(e))
                   }
               else :
                 return {
                     'statusCode': 404,
+                    'headers': {
+                      'Access-Control-Allow-Headers': 'Content-Type',
+                      'Access-Control-Allow-Origin': 'http://localhost:5173',
+                      'Access-Control-Allow-Methods': 'GET'
+                    },
                     'body': json.dumps(str(e))
                 }
             else :
@@ -79,11 +91,21 @@ Resources:
                 data = response['Buckets']
                 return {
                   'statusCode': 200,
+                  'headers': {
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Origin': 'http://localhost:5173',
+                    'Access-Control-Allow-Methods': 'GET'
+                  },
                   'body': json.dumps(str(data))
                 }
               except Exception as e:
                 return {
                     'statusCode': 404,
+                    'headers': {
+                      'Access-Control-Allow-Headers': 'Content-Type',
+                      'Access-Control-Allow-Origin': 'http://localhost:5173',
+                      'Access-Control-Allow-Methods': 'GET'
+                    },
                     'body': json.dumps(str(e))
                 }
       Tags:
