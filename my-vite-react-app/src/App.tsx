@@ -5,7 +5,7 @@ import axios from 'axios';
 function App() {
 
   // aws gateway link.
-  const link = 'https://1nnjgw5pva.execute-api.us-east-1.amazonaws.com/dev/api';
+  const link = 'https://cj31hlwha2.execute-api.us-east-1.amazonaws.com/dev/api';
 
   let link_; // link to fetch with
 
@@ -23,7 +23,6 @@ function App() {
   }
 
   useEffect(() => {
-    setObject("")
     link_ = (backet.length && key.length) ? `${link}?bucket=${backet}&key=${key}` : // if I have both the bucketname and Objectkey I'll get that object..
       backet.length ? `${link}?bucket=${backet.toString()}` : // if I have only the bucketname I'll get only the Objects names of that bucket
         `${link}`; // if I don't have none, I'll just get a list if my aws buckets
@@ -34,8 +33,6 @@ function App() {
       (backet.length && key.length) ? setObject(resp.data) : // an object body 
         backet.length ? setObjects(helperToArray(resp.data)) // a bucket object names
           : setBuckets(helperToArray(resp.data)); // bucket names
-      setBacket("")
-      setKey("")
     }).catch((resp) => {
       console.error(resp);
     });
